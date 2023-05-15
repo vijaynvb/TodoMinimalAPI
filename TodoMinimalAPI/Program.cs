@@ -6,6 +6,21 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddDbContext<TodoDBContext>(opt => opt.UseInMemoryDatabase("TodoDB"));
 
+// policy who can access it 
+
+var MyAllowSpecificOrigins = "_myAllowSpecificOrigins";
+
+builder.Services.AddCors(opt =>
+{
+    opt.AddPolicy( name: MyAllowSpecificOrigins, policy =>
+    {
+        //policy.AllowAnyOrigin()
+        policy.WithOrigins("https://localhost:44360", "mydomain.com")
+        .AllowAnyHeader()
+        .AllowAnyMethod();
+    });
+});
+
 // Add services to the container.
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
@@ -20,7 +35,7 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-app.MapGet("/todos", async (TodoDBContext db) => await db.Todos.ToListAsync());
+app.MapGet("/todos", async (TodoDBContext db) => Results.Ok(await db.Todos.ToListAsync()));
 
 app.MapGet("/todos/{id}", async (TodoDBContext db, int id) =>
             await db.Todos.FindAsync(id)
@@ -54,5 +69,6 @@ app.MapDelete("/todos/{id}", async (TodoDBContext db, int id) =>
     return Results.NotFound();
 });
 
+app.UseCors(MyAllowSpecificOrigins);
 app.Run();
 
