@@ -1,9 +1,11 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 using TodoMinimalAPI.Model;
+using TodoMinimalAPI.Models;
 
 namespace TodoMinimalAPI.Data
 {
-    public class TodoDBContext : DbContext
+    public class TodoDBContext : IdentityDbContext<ApplicationUser>
     {
         public TodoDBContext()
         {
