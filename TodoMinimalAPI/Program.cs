@@ -1,4 +1,5 @@
 using Microsoft.EntityFrameworkCore;
+using TodoMinimalAPI.CustomMiddleware;
 using TodoMinimalAPI.Data;
 using TodoMinimalAPI.Model;
 
@@ -70,5 +71,9 @@ app.MapDelete("/todos/{id}", async (TodoDBContext db, int id) =>
 });
 
 app.UseCors(MyAllowSpecificOrigins);
+
+// has a valid api key if it is valid then allow to access the endpoint if not deny
+app.UseMiddleware<ApiKeyAuthMiddleware>();
+
 app.Run();
 
